@@ -233,7 +233,7 @@ img {
   display: flex;
   align-items: center;
   position: relative;
-  background-image: url("C:\\Users\\Shivank Bhasin\\OneDrive\\Desktop\\gtg-perfumes-frontend\\assets\\images\\grass-background.png");
+  background-image: url("../assets/images/grass-background.png");
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
