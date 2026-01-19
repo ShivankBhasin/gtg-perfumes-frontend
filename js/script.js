@@ -1,32 +1,44 @@
-/* ===============================
-   PRODUCT IMAGE SLIDER
-================================ */
+document.addEventListener("DOMContentLoaded", () => {
 
-const images = [
-  "assets/images/Group 1000004093.png",
-  "assets/images/Group 1000004277.png",
-  "assets/images/Group 1000004283.png",
-  "assets/images/Group 1000004093.png"
-];
+  const images = [
+    "assets/images/Group 1000004277.png",
+    "assets/images/Group 1000004277.png",
+    "assets/images/Group 1000004277.png",
+    "assets/images/Group 1000004277.png"
+  ];
 
-let currentIndex = 0;
+  let currentIndex = 0;
 
-const mainImage = document.querySelector(".gallery-main img");
-const dots = document.querySelectorAll(".dot");
-const prevBtn = document.querySelector(".gallery-arrow.prev");
-const nextBtn = document.querySelector(".gallery-arrow.next");
-const thumbs = document.querySelectorAll(".gallery-thumbs img");
+  const mainImage = document.querySelector(".gallery-main img");
+  const prevBtn = document.querySelector(".gallery-arrow.prev");
+  const nextBtn = document.querySelector(".gallery-arrow.next");
+  const dots = document.querySelectorAll(".gallery-dots .dot"); 
 
-function updateGallery(index) {
+
+  if (!mainImage || !prevBtn || !nextBtn) {
+    console.error("Gallery elements not found");
+    return;
+  }
+
+  function updateGallery(index) {
   currentIndex = index;
+
+  mainImage.style.display = "block";
+  removeFallback();
+
   mainImage.src = images[currentIndex];
+  mainImage.alt = `Perfume bottle ${currentIndex + 1}`;
 
   dots.forEach((dot, i) => {
     dot.classList.toggle("active", i === currentIndex);
   });
+
+  mainImage.onerror = () => {
+    mainImage.style.display = "none";
+    showFallback(mainImage.alt);
+  };
 }
 
-/* Arrow navigation */
 prevBtn.addEventListener("click", () => {
   const newIndex = (currentIndex - 1 + images.length) % images.length;
   updateGallery(newIndex);
@@ -37,39 +49,35 @@ nextBtn.addEventListener("click", () => {
   updateGallery(newIndex);
 });
 
-/* Dot navigation */
-dots.forEach((dot, index) => {
-  dot.addEventListener("click", () => updateGallery(index));
-});
 
-/* Thumbnail navigation */
-thumbs.forEach((thumb, index) => {
-  thumb.addEventListener("click", () => updateGallery(index));
-});
+function showFallback(text) {
+  const fallback = document.createElement("div");
+  fallback.className = "image-fallback";
+  fallback.textContent = text;
+  fallback.dataset.fallback = "true";
+  mainImage.parentElement.appendChild(fallback);
+}
 
-/* ===============================
-   RADIO SELECTION + CART LOGIC
-================================ */
+function removeFallback() {
+  const existing = mainImage.parentElement.querySelector('[data-fallback="true"]');
+  if (existing) existing.remove();
+}
+});
 
 let selectedFragrance = "original";
 let selectedPurchase = "single";
-
 const cartButton = document.querySelector(".add-to-cart");
 
-/* Dummy cart URL generator */
 function updateCartLink() {
   const url = `https://example.com/cart?fragrance=${selectedFragrance}&purchase=${selectedPurchase}`;
   cartButton.setAttribute("href", url);
 }
-
-/* Example radio listeners (IDs assumed) */
 document.querySelectorAll('input[name="fragrance"]').forEach(input => {
   input.addEventListener("change", (e) => {
     selectedFragrance = e.target.value;
     updateCartLink();
   });
 });
-
 document.querySelectorAll('input[name="purchase"]').forEach(input => {
   input.addEventListener("change", (e) => {
     selectedPurchase = e.target.value;
@@ -78,12 +86,7 @@ document.querySelectorAll('input[name="purchase"]').forEach(input => {
   });
 });
 
-/* Initialize */
 updateCartLink();
-
-/* ===============================
-   SUBSCRIPTION EXPAND / COLLAPSE
-================================ */
 
 const singleSub = document.querySelector(".single-subscription");
 const doubleSub = document.querySelector(".double-subscription");
@@ -100,12 +103,99 @@ function toggleSubscriptionDetails() {
   }
 }
 
-/* ===============================
-   COUNT-UP ANIMATION
-================================ */
+document.querySelectorAll(".fragrance-options").forEach(group => {
+  const cards = group.querySelectorAll(".fragrance-card");
 
+  cards.forEach(card => {
+    card.addEventListener("click", () => {
+      cards.forEach(c => {
+        c.classList.remove("active");
+        const radio = c.querySelector(".fragrance-radio");
+        if (radio) radio.classList.remove("selected");
+      });
+      card.classList.add("active");
+      const radio = card.querySelector(".fragrance-radio");
+      if (radio) radio.classList.add("selected");
+    });
+  });
+});
+const singleRadio = document.querySelector(
+  ".subscription-box.popular .subscription-radio"
+);
+const doubleRadio = document.querySelector(
+  ".option-card.double-subscription .subscription-radio"
+);
+
+const singleHeader = document.querySelector(
+  ".subscription-box.popular .option-card"
+);
+const doubleHeader = document.querySelector(
+  ".option-card.double-subscription"
+);
+
+const singleContent = document.querySelector(
+  ".subscription-box.popular .subscription-content"
+);
+const doubleContent = document.querySelector(
+  ".double-subscription-box .subscription-content"
+);
+if (
+  singleRadio &&
+  doubleRadio &&
+  singleContent &&
+  doubleContent &&
+  singleHeader &&
+  doubleHeader
+) {
+  singleContent.style.display = "block";
+  doubleContent.style.display = "none";
+  singleHeader.classList.add("active");
+  doubleHeader.classList.remove("active");
+  singleRadio.querySelector(".radio-inner").style.display = "block";
+  doubleRadio.querySelector(".radio-inner").style.display = "none";
+  singleRadio.addEventListener("click", (e) => {
+    e.stopPropagation(); 
+    singleContent.style.display = "block";
+    doubleContent.style.display = "none";
+    singleHeader.classList.add("active");
+    doubleHeader.classList.remove("active");
+    singleRadio.querySelector(".radio-inner").style.display = "block";
+    doubleRadio.querySelector(".radio-inner").style.display = "none";
+  });
+  doubleRadio.addEventListener("click", (e) => {
+    e.stopPropagation(); 
+    singleContent.style.display = "none";
+    doubleContent.style.display = "block";
+    doubleHeader.classList.add("active");
+    singleHeader.classList.remove("active");
+    doubleRadio.querySelector(".radio-inner").style.display = "block";
+    singleRadio.querySelector(".radio-inner").style.display = "none";
+  });
+}
+document.addEventListener("DOMContentLoaded", () => {
+  const items = document.querySelectorAll(".collection-item");
+
+  items.forEach(item => {
+    const header = item.querySelector(".collection-header");
+    const icon = item.querySelector(".collection-icon");
+
+    header.addEventListener("click", () => {
+      const isOpen = item.classList.contains("open");
+
+      items.forEach(i => {
+        i.classList.remove("open");
+        i.querySelector(".collection-icon").src =
+          "assets/images/ic--baseline-plus (5) 2.png";
+      });
+      if (!isOpen) {
+        item.classList.add("open");
+        icon.src =
+          "assets/images/ic--baseline-minus (1) 1.png";
+      }
+    });
+  });
+});
 const counters = document.querySelectorAll(".stat-percent");
-
 const observer = new IntersectionObserver(
   entries => {
     entries.forEach(entry => {
@@ -113,9 +203,7 @@ const observer = new IntersectionObserver(
         const el = entry.target;
         const target = +el.dataset.target;
         let count = 0;
-
         const increment = Math.ceil(target / 60);
-
         const updateCount = () => {
           count += increment;
           if (count >= target) {
@@ -125,7 +213,6 @@ const observer = new IntersectionObserver(
             requestAnimationFrame(updateCount);
           }
         };
-
         updateCount();
         observer.unobserve(el);
       }
@@ -133,16 +220,10 @@ const observer = new IntersectionObserver(
   },
   { threshold: 0.6 }
 );
-
 counters.forEach(counter => observer.observe(counter));
-
-/* ===============================
-   MOBILE MENU TOGGLE
-================================ */
 
 const hamburger = document.querySelector(".hamburger");
 const navLinks = document.querySelector(".nav-links");
-
 hamburger.addEventListener("click", () => {
   navLinks.classList.toggle("active");
 });
