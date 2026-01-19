@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-
   const images = [
     "assets/images/Group 1000004277.png",
     "assets/images/Group 1000004277.png",
@@ -10,58 +9,29 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentIndex = 0;
 
   const mainImage = document.querySelector(".gallery-main img");
-  const prevBtn = document.querySelector(".gallery-arrow.prev");
-  const nextBtn = document.querySelector(".gallery-arrow.next");
-  const dots = document.querySelectorAll(".gallery-dots .dot"); 
+  const prevBtn = document.getElementById("prevBtn");
+  const nextBtn = document.getElementById("nextBtn");
+  const dots = document.querySelectorAll(".gallery-dots .dot");
 
+  if (!mainImage || !prevBtn || !nextBtn || dots.length === 0) return;
 
-  if (!mainImage || !prevBtn || !nextBtn) {
-    console.error("Gallery elements not found");
-    return;
+  function updateGallery() {
+    mainImage.src = images[currentIndex];
+
+    dots.forEach((dot, i) => {
+      dot.classList.toggle("active", i === currentIndex);
+    });
   }
 
-  function updateGallery(index) {
-  currentIndex = index;
-
-  mainImage.style.display = "block";
-  removeFallback();
-
-  mainImage.src = images[currentIndex];
-  mainImage.alt = `Perfume bottle ${currentIndex + 1}`;
-
-  dots.forEach((dot, i) => {
-    dot.classList.toggle("active", i === currentIndex);
+  prevBtn.addEventListener("click", () => {
+    currentIndex = (currentIndex - 1 + images.length) % images.length;
+    updateGallery();
   });
 
-  mainImage.onerror = () => {
-    mainImage.style.display = "none";
-    showFallback(mainImage.alt);
-  };
-}
-
-prevBtn.addEventListener("click", () => {
-  const newIndex = (currentIndex - 1 + images.length) % images.length;
-  updateGallery(newIndex);
-});
-
-nextBtn.addEventListener("click", () => {
-  const newIndex = (currentIndex + 1) % images.length;
-  updateGallery(newIndex);
-});
-
-
-function showFallback(text) {
-  const fallback = document.createElement("div");
-  fallback.className = "image-fallback";
-  fallback.textContent = text;
-  fallback.dataset.fallback = "true";
-  mainImage.parentElement.appendChild(fallback);
-}
-
-function removeFallback() {
-  const existing = mainImage.parentElement.querySelector('[data-fallback="true"]');
-  if (existing) existing.remove();
-}
+  nextBtn.addEventListener("click", () => {
+    currentIndex = (currentIndex + 1) % images.length;
+    updateGallery();
+  });
 });
 
 let selectedFragrance = "original";

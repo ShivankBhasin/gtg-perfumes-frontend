@@ -1,3 +1,4 @@
+*,
 *::before,
 *::after {
   box-sizing: border-box;
@@ -376,40 +377,29 @@ img {
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
+}
+
+.gallery-arrow {
+  width: 38.9px;
+  height: 38.9px;
+  padding: 0;
+  border: none;
+  background: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.gallery-arrow img {
+  width: 38.9px;
+  height: 38.9px;
+  display: block;
   pointer-events: none;
 }
 
-.gallery-arrow {
-  width: 38px;
-  height: 38px;
-  border: 1px solid var(--green-dark);
-  border-radius: 50%;
-  background: transparent;
-  cursor: pointer;
-  pointer-events: auto;
-}
-
-.gallery-arrow {
-  position: relative;
-}
-
-.gallery-arrow {
-  width: 38px;
-  height: 38px;
-
-  border: none;
-  background-color: transparent;
-
-  background-image: url("C:\\Users\\Shivank Bhasin\\OneDrive\\Desktop\\gtg-perfumes-frontend\\assets\\images\\Button.svg");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-
-  cursor: pointer;
-}
-
 .gallery-arrow.prev {
-  transform: scaleX(-1);
+  transform: none;
 }
 
 .gallery-dots {
